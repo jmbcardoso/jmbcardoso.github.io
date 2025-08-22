@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Welcome to my portfolio :)</title>
   <style>
-    /* Minimal, readable defaults */
     :root { --maxw: 1200px; }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -13,26 +12,24 @@
     body {
       font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
       margin: 0;
-      color: #000;
-      background: #eaf6ff; /* very light, soft blue */
+      color: #fff;
+      background: #000;
     }
 
-    header { padding: 3rem 1rem 2rem; border-bottom: 1px solid #ddd; }
-    header h1 { text-align: center; font-size: clamp(1.5rem, 2.8vw, 2.25rem); font-weight: 700; letter-spacing: 0.2px; }
+    header { padding: 3rem 1rem 2rem; border-bottom: 1px solid #222; }
+    header h1 { text-align: center; font-size: clamp(1.5rem, 2.8vw, 2.25rem); font-weight: 400; letter-spacing: 0.2px; }
 
     main { max-width: var(--maxw); margin: 0 auto; padding: 2rem 1rem 4rem; }
     section { margin: 3rem 0; }
-    section h2 { font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 600; margin-bottom: 1rem; letter-spacing: 0.2px; }
-    .subtle { color: #000; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    section h2 { font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 400; margin-bottom: 1rem; letter-spacing: 0.2px; }
 
-    /* Simple responsive grid */
     .gallery { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-    .gallery img { width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s ease; }
+    .gallery img { width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 2px 10px rgba(255,255,255,0.05); transition: transform 0.2s ease; }
     .gallery img:focus, .gallery img:hover { transform: translateY(-2px); outline: none; }
 
-    footer { border-top: 1px solid #ddd; text-align: center; padding: 2rem 1rem; color: #000; font-size: 0.9rem; }
+    footer { border-top: 1px solid #222; text-align: center; padding: 2rem 1rem; color: #aaa; font-size: 0.9rem; }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
   <header>
@@ -40,81 +37,44 @@
   </header>
 
   <main>
-    <!-- LANDSCAPE -->
     <section id="landscape">
       <h2>Landscape</h2>
-      <p class="subtle">.</p>
-      <div class="gallery">
-        <img loading="lazy" src="images/landscape1.jpg" alt="Landscape photo 1" />
-        <img loading="lazy" src="images/landscape2.jpg" alt="Landscape photo 2" />
-        <img loading="lazy" src="images/landscape3.jpg" alt="Landscape photo 3" />
-        <img loading="lazy" src="images/landscape4.jpg" alt="Landscape photo 4" />
-        <img loading="lazy" src="images/landscape5.jpg" alt="Landscape photo 5" />
-        <img loading="lazy" src="images/landscape6.jpg" alt="Landscape photo 6" />
-        <img loading="lazy" src="images/landscape7.jpg" alt="Landscape photo 7" />
-        <img loading="lazy" src="images/landscape8.jpg" alt="Landscape photo 8" />
-        <img loading="lazy" src="images/landscape9.jpg" alt="Landscape photo 9" />
-        <img loading="lazy" src="images/landscape10.jpg" alt="Landscape photo 10" />
-      </div>
+      <div class="gallery" id="landscape-gallery"></div>
     </section>
 
-    <!-- PORTRAIT -->
     <section id="portrait">
       <h2>Portrait</h2>
-      <p class="subtle">Ten selected portrait photographs.</p>
-      <div class="gallery">
-        <img loading="lazy" src="images/portrait1.jpg" alt="Portrait photo 1" />
-        <img loading="lazy" src="images/portrait2.jpg" alt="Portrait photo 2" />
-        <img loading="lazy" src="images/portrait3.jpg" alt="Portrait photo 3" />
-        <img loading="lazy" src="images/portrait4.jpg" alt="Portrait photo 4" />
-        <img loading="lazy" src="images/portrait5.jpg" alt="Portrait photo 5" />
-        <img loading="lazy" src="images/portrait6.jpg" alt="Portrait photo 6" />
-        <img loading="lazy" src="images/portrait7.jpg" alt="Portrait photo 7" />
-        <img loading="lazy" src="images/portrait8.jpg" alt="Portrait photo 8" />
-        <img loading="lazy" src="images/portrait9.jpg" alt="Portrait photo 9" />
-        <img loading="lazy" src="images/portrait10.jpg" alt="Portrait photo 10" />
-      </div>
+      <div class="gallery" id="portrait-gallery"></div>
     </section>
 
-    <!-- ANIMALS -->
     <section id="animals">
       <h2>Animals</h2>
-      <p class="subtle">Ten selected animal photographs.</p>
-      <div class="gallery">
-        <img loading="lazy" src="images/animals1.jpg" alt="Animal photo 1" />
-        <img loading="lazy" src="images/animals2.jpg" alt="Animal photo 2" />
-        <img loading="lazy" src="images/animals3.jpg" alt="Animal photo 3" />
-        <img loading="lazy" src="images/animals4.jpg" alt="Animal photo 4" />
-        <img loading="lazy" src="images/animals5.jpg" alt="Animal photo 5" />
-        <img loading="lazy" src="images/animals6.jpg" alt="Animal photo 6" />
-        <img loading="lazy" src="images/animals7.jpg" alt="Animal photo 7" />
-        <img loading="lazy" src="images/animals8.jpg" alt="Animal photo 8" />
-        <img loading="lazy" src="images/animals9.jpg" alt="Animal photo 9" />
-        <img loading="lazy" src="images/animals10.jpg" alt="Animal photo 10" />
-      </div>
+      <div class="gallery" id="animals-gallery"></div>
     </section>
 
-    <!-- DETAILS -->
     <section id="details">
       <h2>Details</h2>
-      <p class="subtle">Ten selected detail photographs.</p>
-      <div class="gallery">
-        <img loading="lazy" src="images/details1.jpg" alt="Detail photo 1" />
-        <img loading="lazy" src="images/details2.jpg" alt="Detail photo 2" />
-        <img loading="lazy" src="images/details3.jpg" alt="Detail photo 3" />
-        <img loading="lazy" src="images/details4.jpg" alt="Detail photo 4" />
-        <img loading="lazy" src="images/details5.jpg" alt="Detail photo 5" />
-        <img loading="lazy" src="images/details6.jpg" alt="Detail photo 6" />
-        <img loading="lazy" src="images/details7.jpg" alt="Detail photo 7" />
-        <img loading="lazy" src="images/details8.jpg" alt="Detail photo 8" />
-        <img loading="lazy" src="images/details9.jpg" alt="Detail photo 9" />
-        <img loading="lazy" src="images/details10.jpg" alt="Detail photo 10" />
-      </div>
+      <div class="gallery" id="details-gallery"></div>
     </section>
   </main>
 
   <footer>
     <p>© 2025 · Photography Portfolio</p>
   </footer>
+
+  <script>
+    const sections = ['landscape', 'portrait', 'animals', 'details'];
+    sections.forEach(section => {
+      const gallery = document.getElementById(section + '-gallery');
+      for(let i=1; i<=10; i++){
+        const img = document.createElement('img');
+        img.src = `images/${section}${i}.jpg`;
+        img.alt = `${section} photo ${i}`;
+        img.loading = 'lazy';
+        gallery.appendChild(img);
+      }
+    });
+  </script>
 </body>
 </html>
+
