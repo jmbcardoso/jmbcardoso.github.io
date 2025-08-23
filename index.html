@@ -4,6 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Welcome to my portfolio :)</title>
+
+  <!-- ========================= -->
+  <!-- 🔐 Cabeçalhos de segurança -->
+  <!-- ========================= -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=()">
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+                 style-src 'self' https://fonts.googleapis.com; 
+                 font-src https://fonts.gstatic.com; 
+                 script-src 'self'; 
+                 img-src 'self' data:;">
+
   <style>
     :root { --maxw: 1200px; }
     * { box-sizing: border-box; }
@@ -23,15 +39,98 @@
     section { margin: 3rem 0; }
     section h2 { font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 400; margin-bottom: 1rem; letter-spacing: 0.2px; }
 
-    .gallery { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-    .gallery img { width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 2px 10px rgba(255,255,255,0.05); transition: transform 0.3s ease, filter 0.3s ease; cursor: pointer; }
-    .gallery img:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.1); }
+    .gallery { 
+      display: grid; 
+      gap: 12px; 
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    }
+
+    /* Contêiner da imagem protegida */
+    .protected {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(255,255,255,0.05);
+      cursor: zoom-in;
+    }
+
+    .protected img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      -webkit-user-drag: none;
+      user-drag: none;
+      pointer-events: none;
+    }
+
+    .protected:hover img {
+      transform: translateY(-2px) scale(1.03);
+      filter: brightness(1.1);
+    }
+
+    .protected::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: transparent;
+      cursor: zoom-in;
+    }
 
     footer { border-top: 1px solid #222; text-align: center; padding: 2rem 1rem; color: #aaa; font-size: 0.9rem; }
+
+    /* ===== Lightbox ===== */
+    #lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+      overflow: hidden;
+      touch-action: none; /* permite pinch-zoom */
+    }
+
+    #lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      pointer-events: none;
+      transition: transform 0.2s ease;
+    }
+
+    #lightbox .close {
+      position: absolute;
+      top: 20px; right: 30px;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.5rem;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      padding: 0 15px;
+    }
+
+    .nav-btn.left { left: 10px; }
+    .nav-btn.right { right: 10px; }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
-<body>
+<body oncontextmenu="return false;">
+
   <header>
     <h1>Welcome to my portfolio :)</h1>
   </header>
@@ -62,28 +161,93 @@
     <p>© 2025 · Photography Portfolio</p>
   </footer>
 
+  <!-- Lightbox -->
+  <div id="lightbox">
+    <span class="close">&times;</span>
+    <span class="nav-btn left">&#10094;</span>
+    <img src="" alt="ampliada">
+    <span class="nav-btn right">&#10095;</span>
+  </div>
+
   <script>
-    // Improved dynamic image loader
     const sections = ['landscape', 'portrait', 'animals', 'details'];
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = lightbox.querySelector("img");
+    const closeBtn = lightbox.querySelector(".close");
+    const prevBtn = lightbox.querySelector(".left");
+    const nextBtn = lightbox.querySelector(".right");
+
+    let currentImages = [];
+    let currentIndex = 0;
+    let scale = 1;
+    let startDistance = 0;
+
+    function getDistance(touches) {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx*dx + dy*dy);
+    }
 
     sections.forEach(section => {
       const gallery = document.getElementById(section + '-gallery');
-      fetch(`images/${section}/`) // optional if hosted, else fallback to names
-        .then(() => {
-          // Fallback: try 1 to 20
-          for(let i=1; i<=20; i++){
-            const img = document.createElement('img');
-            img.src = `images/${section}${i}.jpg`;
-            img.alt = `${section} photo ${i}`;
-            img.loading = 'lazy';
-            img.onerror = () => img.remove(); // remove if image doesn't exist
-            gallery.appendChild(img);
-          }
-        })
-        .catch(()=> console.log(`Could not load ${section} images`));
+      
+      for (let i = 1; i <= 20; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('protected');
+
+        const img = document.createElement('img');
+        img.src = `images/${section}${i}.jpg`;
+        img.alt = `${section} photo ${i}`;
+        img.loading = 'lazy';
+        img.draggable = false;
+        img.onerror = () => wrapper.remove();
+
+        wrapper.appendChild(img);
+        gallery.appendChild(wrapper);
+
+        wrapper.addEventListener("click", () => {
+          currentImages = Array.from(gallery.querySelectorAll("img"));
+          currentIndex = currentImages.indexOf(img);
+          scale = 1;
+
+          lightbox.style.display = "flex";
+          lightboxImg.src = img.src;
+          lightboxImg.style.transform = `scale(${scale})`;
+        });
+      }
     });
-  </script>
-</body>
-</html>
+
+    function showImage(index) {
+      if (index >= 0 && index < currentImages.length) {
+        currentIndex = index;
+        scale = 1;
+        lightboxImg.src = currentImages[currentIndex].src;
+        lightboxImg.style.transform = `scale(${scale})`;
+      }
+    }
+
+    prevBtn.addEventListener("click", () => showImage(currentIndex - 1));
+    nextBtn.addEventListener("click", () => showImage(currentIndex + 1));
+
+    closeBtn.addEventListener("click", () => {
+      lightbox.style.display = "none";
+      lightboxImg.src = "";
+      scale = 1;
+    });
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) {
+        lightbox.style.display = "none";
+        lightboxImg.src = "";
+        scale = 1;
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (lightbox.style.display === "flex") {
+        if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+        if (e.key === "ArrowRight") showImage(currentIndex + 1);
+        if (e.key === "Escape")
+
 
 
