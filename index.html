@@ -19,7 +19,7 @@
                  font-src https://fonts.gstatic.com; 
                  script-src 'self'; 
                  img-src 'self' data:;">
-
+  
   <style>
     :root { --maxw: 1200px; }
     * { box-sizing: border-box; }
@@ -39,48 +39,25 @@
     section { margin: 3rem 0; }
     section h2 { font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 400; margin-bottom: 1rem; letter-spacing: 0.2px; }
 
-    .gallery { 
-      display: grid; 
-      gap: 12px; 
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-    }
+    .gallery { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 
-    /* Contêiner da imagem protegida */
-    .protected {
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(255,255,255,0.05);
-      cursor: zoom-in;
-    }
-
-    .protected img {
+    .gallery img {
       width: 100%;
       height: auto;
       display: block;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(255,255,255,0.05);
       transition: transform 0.3s ease, filter 0.3s ease;
+      cursor: pointer;
       -webkit-user-drag: none;
       user-drag: none;
-      pointer-events: none;
     }
 
-    .protected:hover img {
-      transform: translateY(-2px) scale(1.03);
-      filter: brightness(1.1);
-    }
-
-    .protected::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: transparent;
-      cursor: zoom-in;
-    }
+    .gallery img:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.1); }
 
     footer { border-top: 1px solid #222; text-align: center; padding: 2rem 1rem; color: #aaa; font-size: 0.9rem; }
 
-    /* ===== Lightbox ===== */
+    /* Lightbox */
     #lightbox {
       position: fixed;
       top: 0; left: 0;
@@ -92,7 +69,7 @@
       z-index: 9999;
       flex-direction: column;
       overflow: hidden;
-      touch-action: none; /* permite pinch-zoom */
+      touch-action: none;
     }
 
     #lightbox img {
@@ -127,6 +104,7 @@
     .nav-btn.left { left: 10px; }
     .nav-btn.right { right: 10px; }
   </style>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body oncontextmenu="return false;">
@@ -190,22 +168,17 @@
 
     sections.forEach(section => {
       const gallery = document.getElementById(section + '-gallery');
-      
-      for (let i = 1; i <= 20; i++) {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('protected');
 
+      for (let i = 1; i <= 20; i++) {
         const img = document.createElement('img');
         img.src = `images/${section}${i}.jpg`;
         img.alt = `${section} photo ${i}`;
         img.loading = 'lazy';
         img.draggable = false;
-        img.onerror = () => wrapper.remove();
+        img.onerror = () => img.remove();
+        gallery.appendChild(img);
 
-        wrapper.appendChild(img);
-        gallery.appendChild(wrapper);
-
-        wrapper.addEventListener("click", () => {
+        img.addEventListener("click", () => {
           currentImages = Array.from(gallery.querySelectorAll("img"));
           currentIndex = currentImages.indexOf(img);
           scale = 1;
@@ -247,7 +220,42 @@
       if (lightbox.style.display === "flex") {
         if (e.key === "ArrowLeft") showImage(currentIndex - 1);
         if (e.key === "ArrowRight") showImage(currentIndex + 1);
-        if (e.key === "Escape")
+        if (e.key === "Escape") {
+          lightbox.style.display = "none";
+          lightboxImg.src = "";
+          scale = 1;
+        }
+      }
+    });
 
+    // Zoom desktop
+    lightbox.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      scale += delta;
+      if (scale < 0.5) scale = 0.5;
+      if (scale > 3) scale = 3;
+      lightboxImg.style.transform = `scale(${scale})`;
+    });
 
-
+    // Pinch-to-zoom mobile
+    let initialScale = 1;
+    lightbox.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 2) startDistance = getDistance(e.touches);
+    });
+    lightbox.addEventListener("touchmove", (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const distance = getDistance(e.touches);
+        scale = initialScale * (distance / startDistance);
+        if (scale < 0.5) scale = 0.5;
+        if (scale > 3) scale = 3;
+        lightboxImg.style.transform = `scale(${scale})`;
+      }
+    });
+    lightbox.addEventListener("touchend", (e) => {
+      if (e.touches.length < 2) initialScale = scale;
+    });
+  </script>
+</body>
+</html>
