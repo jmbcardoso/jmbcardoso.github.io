@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Welcome to my portfolio :)</title>
 
-  <!-- ========================= -->
-  <!-- 🔐 Cabeçalhos de segurança -->
-  <!-- ========================= -->
+  <!-- Cabeçalhos de segurança -->
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -19,7 +17,7 @@
                  font-src https://fonts.gstatic.com; 
                  script-src 'self'; 
                  img-src 'self' data:;">
-  
+
   <style>
     :root { --maxw: 1200px; }
     * { box-sizing: border-box; }
@@ -148,7 +146,7 @@
   </div>
 
   <script>
-    const sections = ['landscape', 'portrait', 'animals', 'details'];
+    const sections = ['landscape','portrait','animals','details'];
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = lightbox.querySelector("img");
     const closeBtn = lightbox.querySelector(".close");
@@ -158,31 +156,32 @@
     let currentImages = [];
     let currentIndex = 0;
     let scale = 1;
+    let initialScale = 1;
     let startDistance = 0;
 
-    function getDistance(touches) {
+    function getDistance(touches){
       const dx = touches[0].clientX - touches[1].clientX;
       const dy = touches[0].clientY - touches[1].clientY;
       return Math.sqrt(dx*dx + dy*dy);
     }
 
+    // Carrega automaticamente as imagens da pasta
     sections.forEach(section => {
-      const gallery = document.getElementById(section + '-gallery');
-
-      for (let i = 1; i <= 20; i++) {
+      const gallery = document.getElementById(section+'-gallery');
+      for(let i=1;i<=20;i++){
         const img = document.createElement('img');
-        img.src = `images/${section}${i}.jpg`;
+        img.src = `images/${section}.${i}.jpg`;
         img.alt = `${section} photo ${i}`;
         img.loading = 'lazy';
         img.draggable = false;
         img.onerror = () => img.remove();
         gallery.appendChild(img);
 
-        img.addEventListener("click", () => {
-          currentImages = Array.from(gallery.querySelectorAll("img"));
+        img.addEventListener('click', ()=>{
+          currentImages = Array.from(gallery.querySelectorAll('img'));
           currentIndex = currentImages.indexOf(img);
           scale = 1;
-
+          initialScale = 1;
           lightbox.style.display = "flex";
           lightboxImg.src = img.src;
           lightboxImg.style.transform = `scale(${scale})`;
@@ -190,72 +189,73 @@
       }
     });
 
-    function showImage(index) {
-      if (index >= 0 && index < currentImages.length) {
-        currentIndex = index;
-        scale = 1;
-        lightboxImg.src = currentImages[currentIndex].src;
-        lightboxImg.style.transform = `scale(${scale})`;
+    function showImage(index){
+      if(index>=0 && index<currentImages.length){
+        currentIndex=index;
+        scale=1;
+        initialScale=1;
+        lightboxImg.src=currentImages[currentIndex].src;
+        lightboxImg.style.transform=`scale(${scale})`;
       }
     }
 
-    prevBtn.addEventListener("click", () => showImage(currentIndex - 1));
-    nextBtn.addEventListener("click", () => showImage(currentIndex + 1));
+    prevBtn.addEventListener("click", ()=>showImage(currentIndex-1));
+    nextBtn.addEventListener("click", ()=>showImage(currentIndex+1));
 
-    closeBtn.addEventListener("click", () => {
-      lightbox.style.display = "none";
-      lightboxImg.src = "";
-      scale = 1;
+    closeBtn.addEventListener("click", ()=>{
+      lightbox.style.display="none";
+      lightboxImg.src="";
+      scale=1;
+      initialScale=1;
     });
 
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) {
-        lightbox.style.display = "none";
-        lightboxImg.src = "";
-        scale = 1;
+    lightbox.addEventListener("click",(e)=>{
+      if(e.target===lightbox){
+        lightbox.style.display="none";
+        lightboxImg.src="";
+        scale=1;
+        initialScale=1;
       }
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (lightbox.style.display === "flex") {
-        if (e.key === "ArrowLeft") showImage(currentIndex - 1);
-        if (e.key === "ArrowRight") showImage(currentIndex + 1);
-        if (e.key === "Escape") {
-          lightbox.style.display = "none";
-          lightboxImg.src = "";
-          scale = 1;
+    document.addEventListener("keydown",(e)=>{
+      if(lightbox.style.display==="flex"){
+        if(e.key==="ArrowLeft") showImage(currentIndex-1);
+        if(e.key==="ArrowRight") showImage(currentIndex+1);
+        if(e.key==="Escape"){
+          lightbox.style.display="none";
+          lightboxImg.src="";
+          scale=1;
+          initialScale=1;
         }
       }
     });
 
-    // Zoom desktop
-    lightbox.addEventListener("wheel", (e) => {
+    // Zoom Desktop
+    lightbox.addEventListener("wheel",(e)=>{
       e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      scale += delta;
-      if (scale < 0.5) scale = 0.5;
-      if (scale > 3) scale = 3;
-      lightboxImg.style.transform = `scale(${scale})`;
+      scale += e.deltaY>0?-0.1:0.1;
+      if(scale<0.5) scale=0.5;
+      if(scale>3) scale=3;
+      lightboxImg.style.transform=`scale(${scale})`;
     });
 
-    // Pinch-to-zoom mobile
-    let initialScale = 1;
-    lightbox.addEventListener("touchstart", (e) => {
-      if (e.touches.length === 2) startDistance = getDistance(e.touches);
+    // Pinch-to-zoom Mobile
+    lightbox.addEventListener("touchstart",(e)=>{
+      if(e.touches.length===2) startDistance=getDistance(e.touches);
     });
-    lightbox.addEventListener("touchmove", (e) => {
-      if (e.touches.length === 2) {
+    lightbox.addEventListener("touchmove",(e)=>{
+      if(e.touches.length===2){
         e.preventDefault();
-        const distance = getDistance(e.touches);
-        scale = initialScale * (distance / startDistance);
-        if (scale < 0.5) scale = 0.5;
-        if (scale > 3) scale = 3;
-        lightboxImg.style.transform = `scale(${scale})`;
+        const distance=getDistance(e.touches);
+        scale=initialScale*(distance/startDistance);
+        if(scale<0.5) scale=0.5;
+        if(scale>3) scale=3;
+        lightboxImg.style.transform=`scale(${scale})`;
       }
     });
-    lightbox.addEventListener("touchend", (e) => {
-      if (e.touches.length < 2) initialScale = scale;
+    lightbox.addEventListener("touchend",(e)=>{
+      if(e.touches.length<2) initialScale=scale;
     });
-  </script>
-</body>
-</html>
+  </
+
